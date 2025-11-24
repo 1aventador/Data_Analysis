@@ -17,6 +17,7 @@ table 'Measure Table'
 			)
 		formatString: #,0
 		lineageTag: b22b0308-e3e5-40ae-8678-e1d83ae9a1ce
+		description: Total number of items returned by customers
 
 	measure 'Average Retail Price' = ```
 			
@@ -26,6 +27,7 @@ table 'Measure Table'
 			```
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
 		lineageTag: f8fdb7a6-09dd-40e1-a58c-4ec092b5708f
+		description: Average selling price across products in current selection
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -36,6 +38,7 @@ table 'Measure Table'
 			)
 		formatString: #,0
 		lineageTag: a5912084-496c-4d57-8dfd-e8a114d2e782
+		description: Count of individual return transactions
 
 	measure 'Total Orders' = ```
 			
@@ -45,6 +48,7 @@ table 'Measure Table'
 			```
 		formatString: #,0
 		lineageTag: 177d01b2-ac08-45f0-b218-2e898a7ff488
+		description: Count of unique orders placed
 
 	measure 'Total Customers' =
 			
@@ -52,6 +56,7 @@ table 'Measure Table'
 			)
 		formatString: #,0.0
 		lineageTag: 225bad03-0148-44fe-8a88-872ad5d17a38
+		description: Count of unique customers who made purchases
 
 	measure 'Return Rate' = ```
 			
@@ -63,6 +68,7 @@ table 'Measure Table'
 			```
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 96908347-f572-4b41-9dec-9d739a8de061
+		description: Percentage of items returned vs sold. Target <5%
 
 	measure 'Bulk Orders' =
 			
@@ -72,6 +78,7 @@ table 'Measure Table'
 			)
 		formatString: #,0
 		lineageTag: f20cab3b-2357-4c30-a917-3af77db61337
+		description: Count of orders with multiple items (quantity > 1)
 
 		annotation PBI_FormatHint = {"isDecimal":true}
 
@@ -83,6 +90,7 @@ table 'Measure Table'
 			)
 		formatString: #,0
 		lineageTag: c7bba201-5e09-49a8-83f8-70fb6223dc3e
+		description: Count of orders placed on Saturdays and Sundays
 
 	measure 'Bike Returns' =
 			
@@ -92,6 +100,7 @@ table 'Measure Table'
 			    )
 		formatString: 0
 		lineageTag: e73635bf-f217-49b0-be76-e6cc557ce44d
+		description: Number of bike units returned by customers
 
 	measure 'Bike Sales' =
 			
@@ -101,6 +110,7 @@ table 'Measure Table'
 			)
 		formatString: 0
 		lineageTag: 9d77152b-49ec-4513-bae0-69402239593b
+		description: Total quantity of bikes sold
 
 	measure 'Bike Return Rate' =
 			
@@ -110,6 +120,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: db249983-ced9-4d97-a83c-12d9adb66d91
+		description: Return percentage for bikes only
 
 	measure 'All Orders' =
 			
@@ -188,6 +199,7 @@ table 'Measure Table'
 			```
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: 56f53e63-26a9-4519-b8bf-f043b0a55b7b
+		description: Total sales revenue from all orders. Core financial KPI.
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -199,6 +211,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: 4c59a9a7-4cd7-4f30-90ea-aa26eef48a7b
+		description: Revenue divided by unique customer count. Indicates customer value.
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -213,6 +226,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: 84f35acc-adcb-4cf1-8bd1-1299d3aefe48
+		description: Total cost of goods sold for all orders
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -221,6 +235,7 @@ table 'Measure Table'
 			[Total Revenue] - [Total Cost]
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: e20a3dd3-0dc1-4261-b709-5ce5a6d08eba
+		description: Gross profit (Revenue minus Cost). Key profitability metric.
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -364,6 +379,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6
+		description: Gross margin percentage. Benchmark: 40-60% for retail
 
 	measure 'Profit Margin %' =
 			
@@ -374,6 +390,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c7
+		description: Net profit margin percentage. Target: 5-15%
 
 	measure 'Cost per Unit' =
 			
@@ -384,6 +401,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c8
+		description: Average cost per item sold
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -396,6 +414,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c9
+		description: Average revenue per item sold (effective selling price)
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -408,6 +427,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5ca
+		description: Total revenue divided by order count. Track for upselling success.
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -420,6 +440,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5cb
+		description: Month-over-month revenue growth percentage
 
 	measure 'Year-over-Year Revenue' =
 			
@@ -433,6 +454,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5cc
+		description: Total revenue from the same period one year ago (prior year basis)
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -445,6 +467,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5cd
+		description: Annual growth percentage. Positive = growing year-over-year
 
 	measure 'Return Rate by Category' =
 			
@@ -465,6 +488,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5ce
+		description: Return rate across entire product portfolio (ignores category filter)
 
 	measure 'Same Period Last Year Revenue' =
 			
@@ -478,6 +502,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d0
+		description: Prior year comparison baseline (365 days previous)
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -490,6 +515,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d1
+		description: Year-to-date revenue as percentage of annualized target
 
 	measure 'Order Frequency' =
 			
@@ -500,6 +526,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d2
+		description: Average orders per customer. Higher = more engagement
 
 	measure 'Customer Repeat Purchase Rate' =
 			
@@ -519,6 +546,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d3
+		description: Percentage of customers with 2+ orders (loyalty indicator)
 
 	measure 'Top 10% Customer Revenue' =
 			
@@ -541,6 +569,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d4
+		description: Total revenue from top 10% of customers by value (Pareto segment)
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -553,12 +582,14 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d5
+		description: Percentage of revenue from top 10% customer segment (concentration measure)
 
 	measure 'Products Sold Count' =
 			
 			DISTINCTCOUNT('Product Lookup'[ProductKey])
 		formatString: #,0
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d6
+		description: Number of unique products sold (product portfolio range)
 
 	measure 'Average Revenue per Product' =
 			
@@ -569,6 +600,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d7
+		description: Total revenue divided by distinct products (efficiency of product mix)
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -586,6 +618,7 @@ table 'Measure Table'
 			)
 		formatString: 0.00
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d8
+		description: Territory performance relative to average (1.0 = average, >1.0 = outperforming)
 
 	measure 'Days Since Last Order' =
 			
@@ -596,12 +629,14 @@ table 'Measure Table'
 			)
 		formatString: #,0
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d9
+		description: Days since most recent order (recency metric for customer engagement)
 
 	measure 'Revenue vs Target' =
 			
 			[Total Revenue] - [Revenue Target]
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5da
+		description: Revenue variance from target (positive = exceeding target)
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -614,12 +649,14 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5db
+		description: Revenue variance percentage from target
 
 	measure 'Profit vs Target' =
 			
 			[Total Profit] - [Profit Target]
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5dc
+		description: Profit variance from target (shows margin performance vs goal)
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -632,12 +669,14 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5dd
+		description: Profit variance percentage from target
 
 	measure 'Fiscal Year Start Month' =
 			
 			7
 		formatString: 0
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6d7
+		description: Helper measure: fiscal year begins July (month 7) for financial reporting
 
 	measure 'Current Fiscal Year' =
 			
@@ -652,6 +691,7 @@ table 'Measure Table'
 			)
 		formatString: 0
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6d8
+		description: Helper measure: current fiscal year number (July-June period)
 
 	measure 'Fiscal Year (Selected Date)' =
 			
@@ -666,6 +706,7 @@ table 'Measure Table'
 			)
 		formatString: 0
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6d9
+		description: Helper measure: fiscal year for selected date (context-aware)
 
 	measure 'Fiscal Year Start Date' =
 			
@@ -674,6 +715,7 @@ table 'Measure Table'
 			DATE(FiscalYear - 1, 7, 1)
 		formatString: Short Date
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6da
+		description: Helper measure: July 1 start date for selected fiscal year
 
 	measure 'Fiscal Year End Date' =
 			
@@ -682,6 +724,7 @@ table 'Measure Table'
 			DATE(FiscalYear, 6, 30)
 		formatString: Short Date
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6db
+		description: Helper measure: June 30 end date for selected fiscal year
 
 	measure 'Total Sales YTD (Fiscal)' =
 			
@@ -695,6 +738,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6dc
+		description: Total revenue from July 1 (fiscal year start) to current date
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -712,6 +756,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6dd
+		description: Total revenue from prior fiscal year same period (YoY comparison baseline)
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -724,12 +769,14 @@ table 'Measure Table'
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6de
+		description: Fiscal year-over-year growth percentage (July 1 - June 30 basis)
 
 	measure 'YoY Δ (Fiscal)' =
 			
 			[Total Sales YTD (Fiscal)] - [Total Sales PY (Fiscal)]
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6df
+		description: Fiscal year-over-year revenue variance (absolute dollars)
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
@@ -746,6 +793,7 @@ table 'Measure Table'
 			)
 		formatString: \$#,0;(\$#,0);\$#,0
 		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6e0
+		description: Total revenue from the immediately previous calendar month
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
