@@ -8,6 +8,7 @@ table 'Measure Table'
 			)
 		formatString: #,0
 		lineageTag: 8b09b6ec-2f0a-432b-a2cf-39bf80819535
+		description: Total number of items sold across all orders
 
 	measure 'Quantity Returned' =
 			

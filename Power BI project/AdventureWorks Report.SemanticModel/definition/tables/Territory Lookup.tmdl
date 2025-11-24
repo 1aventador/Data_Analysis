@@ -8,6 +8,7 @@ table 'Territory Lookup'
 		lineageTag: ab55fcca-c009-4ba4-966d-6bae9907434f
 		summarizeBy: none
 		sourceColumn: SalesTerritoryKey
+		description: Unique identifier for each sales territory
 
 		annotation SummarizationSetBy = Automatic
 
@@ -16,6 +17,7 @@ table 'Territory Lookup'
 		lineageTag: ebe8f41d-0a2a-4313-9f3c-d7484f4b7ae3
 		summarizeBy: none
 		sourceColumn: Region
+		description: Sales region or territory name (e.g., Southwest, Northeast)
 
 		annotation SummarizationSetBy = Automatic
 
