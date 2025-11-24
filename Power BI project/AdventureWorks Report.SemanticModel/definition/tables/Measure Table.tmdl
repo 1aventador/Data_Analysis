@@ -632,6 +632,122 @@ table 'Measure Table'
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5dd
 
+	measure 'Fiscal Year Start Month' =
+			
+			7
+		formatString: 0
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6d7
+
+	measure 'Current Fiscal Year' =
+			
+			VAR CurrentDate = TODAY()
+			VAR CurrentMonth = MONTH(CurrentDate)
+			VAR CurrentYear = YEAR(CurrentDate)
+			RETURN
+			IF(
+			    CurrentMonth >= 7,
+			    CurrentYear + 1,
+			    CurrentYear
+			)
+		formatString: 0
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6d8
+
+	measure 'Fiscal Year (Selected Date)' =
+			
+			VAR SelectedDate = MAX('Calendar Lookup'[Date])
+			VAR SelectedMonth = MONTH(SelectedDate)
+			VAR SelectedYear = YEAR(SelectedDate)
+			RETURN
+			IF(
+			    SelectedMonth >= 7,
+			    SelectedYear + 1,
+			    SelectedYear
+			)
+		formatString: 0
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6d9
+
+	measure 'Fiscal Year Start Date' =
+			
+			VAR FiscalYear = [Fiscal Year (Selected Date)]
+			RETURN
+			DATE(FiscalYear - 1, 7, 1)
+		formatString: Short Date
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6da
+
+	measure 'Fiscal Year End Date' =
+			
+			VAR FiscalYear = [Fiscal Year (Selected Date)]
+			RETURN
+			DATE(FiscalYear, 6, 30)
+		formatString: Short Date
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6db
+
+	measure 'Total Sales YTD (Fiscal)' =
+			
+			VAR FiscalYearStart = [Fiscal Year Start Date]
+			VAR MaxSelectedDate = MAX('Calendar Lookup'[Date])
+			RETURN
+			CALCULATE(
+			    [Total Revenue],
+			    'Calendar Lookup'[Date] >= FiscalYearStart,
+			    'Calendar Lookup'[Date] <= MaxSelectedDate
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6dc
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Sales PY (Fiscal)' =
+			
+			VAR FiscalYearStart = [Fiscal Year Start Date]
+			VAR MaxSelectedDate = MAX('Calendar Lookup'[Date])
+			VAR PreviousFYStart = DATE(YEAR(FiscalYearStart) - 1, MONTH(FiscalYearStart), DAY(FiscalYearStart))
+			VAR PreviousFYEnd = DATE(YEAR(MaxSelectedDate) - 1, MONTH(MaxSelectedDate), DAY(MaxSelectedDate))
+			RETURN
+			CALCULATE(
+			    [Total Revenue],
+			    'Calendar Lookup'[Date] >= PreviousFYStart,
+			    'Calendar Lookup'[Date] <= PreviousFYEnd
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6dd
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'YoY % Growth (Fiscal)' =
+			
+			DIVIDE(
+			    [Total Sales YTD (Fiscal)] - [Total Sales PY (Fiscal)],
+			    [Total Sales PY (Fiscal)],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6de
+
+	measure 'YoY Δ (Fiscal)' =
+			
+			[Total Sales YTD (Fiscal)] - [Total Sales PY (Fiscal)]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6df
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Previous Month Sales' =
+			
+			VAR MaxSelectedDate = MAX('Calendar Lookup'[Date])
+			VAR PreviousMonthStart = DATE(YEAR(MaxSelectedDate), MONTH(MaxSelectedDate) - 1, 1)
+			VAR PreviousMonthEnd = EOMONTH(PreviousMonthStart, 0)
+			RETURN
+			CALCULATE(
+			    [Total Revenue],
+			    'Calendar Lookup'[Date] >= PreviousMonthStart,
+			    'Calendar Lookup'[Date] <= PreviousMonthEnd
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6e0
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
 	partition 'Measure Table' = m
 		mode: import
 		source =

@@ -21,15 +21,16 @@
 
 ## Model Overview
 
-The AdventureWorks Report semantic model contains **9 tables**, **56 DAX measures**, and **9 active relationships**. The model is designed to support sales analytics, customer analysis, product performance tracking, and financial reporting.
+The AdventureWorks Report semantic model contains **9 tables**, **65 DAX measures**, and **9 active relationships**. The model is designed to support sales analytics, customer analysis, product performance tracking, and financial reporting with comprehensive fiscal year (July-June) time intelligence.
 
 **Key Statistics:**
-- Total Measures: 56
+- Total Measures: 65
 - Total Tables: 9
 - Total Relationships: 9
 - Data Mode: Import
 - Source Query Culture: en-US
 - Model Culture: ru-RU
+- Fiscal Year Period: July - June
 
 ---
 
@@ -161,6 +162,21 @@ The AdventureWorks Report semantic model contains **9 tables**, **56 DAX measure
 | Profit vs Target | `[Total Profit] - [Profit Target]` | Variance | Actual profit variance from target | Currency |
 | Profit vs Target % | `DIVIDE([Profit vs Target], [Profit Target], 0)` | Variance | Profit variance as percentage of target | Percentage |
 | YTD % of Target | `DIVIDE([YTD Revenue], [Revenue Target] * 12, 0)` | Variance | Year-to-date progress toward annual target | Percentage |
+
+### Fiscal Year Time Intelligence (July-June)
+
+| Name | Expression | Folder | Description | Format |
+|---|---|---|---|---|
+| Fiscal Year Start Month | `7` | Fiscal Time Intelligence | Fiscal year start month constant (July) | Number |
+| Current Fiscal Year | `VAR CurrentDate = TODAY()` `VAR CurrentMonth = MONTH(CurrentDate)` `VAR CurrentYear = YEAR(CurrentDate)` `RETURN IF(CurrentMonth >= 7, CurrentYear + 1, CurrentYear)` | Fiscal Time Intelligence | Current fiscal year based on today's date. If month >= 7, fiscal year is next calendar year | Number |
+| Fiscal Year (Selected Date) | `VAR SelectedDate = MAX('Calendar Lookup'[Date])` `VAR SelectedMonth = MONTH(SelectedDate)` `VAR SelectedYear = YEAR(SelectedDate)` `RETURN IF(SelectedMonth >= 7, SelectedYear + 1, SelectedYear)` | Fiscal Time Intelligence | Fiscal year for the maximum selected date in filter context. Handles date filters and slicers | Number |
+| Fiscal Year Start Date | `VAR FiscalYear = [Fiscal Year (Selected Date)]` `RETURN DATE(FiscalYear - 1, 7, 1)` | Fiscal Time Intelligence | Start date of the fiscal year (July 1st of previous calendar year). Respects filter context | Date |
+| Fiscal Year End Date | `VAR FiscalYear = [Fiscal Year (Selected Date)]` `RETURN DATE(FiscalYear, 6, 30)` | Fiscal Time Intelligence | End date of the fiscal year (June 30th). Respects filter context | Date |
+| Total Sales YTD (Fiscal) | `VAR FiscalYearStart = [Fiscal Year Start Date]` `VAR MaxSelectedDate = MAX('Calendar Lookup'[Date])` `RETURN CALCULATE([Total Revenue], 'Calendar Lookup'[Date] >= FiscalYearStart, 'Calendar Lookup'[Date] <= MaxSelectedDate)` | Fiscal Time Intelligence | Total revenue from start of fiscal year to selected date. Works with date filters, slicers, and incomplete years | Currency |
+| Total Sales PY (Fiscal) | `VAR FiscalYearStart = [Fiscal Year Start Date]` `VAR MaxSelectedDate = MAX('Calendar Lookup'[Date])` `VAR PreviousFYStart = DATE(YEAR(FiscalYearStart) - 1, MONTH(FiscalYearStart), DAY(FiscalYearStart))` `VAR PreviousFYEnd = DATE(YEAR(MaxSelectedDate) - 1, MONTH(MaxSelectedDate), DAY(MaxSelectedDate))` `RETURN CALCULATE([Total Revenue], 'Calendar Lookup'[Date] >= PreviousFYStart, 'Calendar Lookup'[Date] <= PreviousFYEnd)` | Fiscal Time Intelligence | Prior year fiscal revenue for the same period as selected dates. Enables true YoY comparison | Currency |
+| YoY % Growth (Fiscal) | `DIVIDE([Total Sales YTD (Fiscal)] - [Total Sales PY (Fiscal)], [Total Sales PY (Fiscal)], 0)` | Fiscal Time Intelligence | Year-over-year growth percentage (fiscal basis). Handles zero/null values | Percentage |
+| YoY Δ (Fiscal) | `[Total Sales YTD (Fiscal)] - [Total Sales PY (Fiscal)]` | Fiscal Time Intelligence | Year-over-year absolute change in revenue (fiscal basis). Shows dollar amount of growth | Currency |
+| Previous Month Sales | `VAR MaxSelectedDate = MAX('Calendar Lookup'[Date])` `VAR PreviousMonthStart = DATE(YEAR(MaxSelectedDate), MONTH(MaxSelectedDate) - 1, 1)` `VAR PreviousMonthEnd = EOMONTH(PreviousMonthStart, 0)` `RETURN CALCULATE([Total Revenue], 'Calendar Lookup'[Date] >= PreviousMonthStart, 'Calendar Lookup'[Date] <= PreviousMonthEnd)` | Fiscal Time Intelligence | Sales from the previous calendar month relative to selected date. Works with date filters and disconnected slicers | Currency |
 
 ---
 
