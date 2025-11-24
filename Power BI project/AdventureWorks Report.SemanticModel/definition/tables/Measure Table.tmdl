@@ -354,6 +354,296 @@ table 'Measure Table'
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
+	measure 'Gross Margin %' =
+			
+			DIVIDE(
+			    [Total Revenue] - [Total Cost],
+			    [Total Revenue],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6
+
+	measure 'Profit Margin %' =
+			
+			DIVIDE(
+			    [Total Profit],
+			    [Total Revenue],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c7
+
+	measure 'Cost per Unit' =
+			
+			DIVIDE(
+			    [Total Cost],
+			    [Quantity Sold],
+			    0
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c8
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Revenue per Unit' =
+			
+			DIVIDE(
+			    [Total Revenue],
+			    [Quantity Sold],
+			    0
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c9
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Average Order Value' =
+			
+			DIVIDE(
+			    [Total Revenue],
+			    [Total Orders],
+			    0
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5ca
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Sales Growth %' =
+			
+			DIVIDE(
+			    [Total Revenue] - [Previous Month Revenue],
+			    [Previous Month Revenue],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5cb
+
+	measure 'Year-over-Year Revenue' =
+			
+			CALCULATE(
+			    [Total Revenue],
+			    DATEADD(
+			        'Calendar Lookup'[Date],
+			        -12,
+			        MONTH
+			    )
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5cc
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Year-over-Year Growth %' =
+			
+			DIVIDE(
+			    [Total Revenue] - [Year-over-Year Revenue],
+			    [Year-over-Year Revenue],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5cd
+
+	measure 'Return Rate by Category' =
+			
+			DIVIDE(
+			    CALCULATE(
+			        [Quantity Returned],
+			        ALL(
+			            'Product Categories Lookup'
+			        )
+			    ),
+			    CALCULATE(
+			        [Quantity Sold],
+			        ALL(
+			            'Product Categories Lookup'
+			        )
+			    ),
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5ce
+
+	measure 'High Return Products' =
+			
+			SUMPRODUCT(
+			    ('Product Lookup'[ProductKey] <> BLANK()) *
+			    (CALCULATE(
+			        [Return Rate],
+			        'Product Lookup'[ProductKey]
+			    ) > 0.1)
+			)
+		formatString: #,0
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5cf
+
+	measure 'Same Period Last Year Revenue' =
+			
+			CALCULATE(
+			    [Total Revenue],
+			    DATEADD(
+			        'Calendar Lookup'[Date],
+			        -365,
+			        DAY
+			    )
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d0
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'YTD % of Target' =
+			
+			DIVIDE(
+			    [YTD Revenue],
+			    [Revenue Target] * 12,
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d1
+
+	measure 'Order Frequency' =
+			
+			DIVIDE(
+			    [Total Orders],
+			    [Total Customers],
+			    0
+			)
+		formatString: 0.00
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d2
+
+	measure 'Customer Repeat Purchase Rate' =
+			
+			DIVIDE(
+			    CALCULATE(
+			        DISTINCTCOUNT('Sales Data'[CustomerKey]),
+			        FILTER(
+			            ALL('Sales Data'),
+			            CALCULATE(
+			                [Total Orders],
+			                'Sales Data'[CustomerKey]
+			            ) > 1
+			        )
+			    ),
+			    [Total Customers],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d3
+
+	measure 'Top 10% Customer Revenue' =
+			
+			CALCULATE(
+			    [Total Revenue],
+			    TOPN(
+			        MAXX(
+			            ALL('Sales Data'[CustomerKey]),
+			            CALCULATE(
+			                [Total Customers]
+			            )
+			        ) * 0.1,
+			        ALL('Sales Data'[CustomerKey]),
+			        CALCULATE(
+			            [Total Revenue],
+			            'Sales Data'[CustomerKey]
+			        ),
+			        DESC
+			    )
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d4
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Top 10% Customer % of Total' =
+			
+			DIVIDE(
+			    [Top 10% Customer Revenue],
+			    [Total Revenue],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d5
+
+	measure 'Products Sold Count' =
+			
+			DISTINCTCOUNT('Product Lookup'[ProductKey])
+		formatString: #,0
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d6
+
+	measure 'Average Revenue per Product' =
+			
+			DIVIDE(
+			    [Total Revenue],
+			    [Products Sold Count],
+			    0
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d7
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Territory Performance Index' =
+			
+			DIVIDE(
+			    [Total Revenue],
+			    CALCULATE(
+			        [Total Revenue],
+			        ALL(
+			            'Territory Lookup'
+			        )
+			    ) / DISTINCTCOUNT('Territory Lookup'[SalesTerritoryKey]),
+			    0
+			)
+		formatString: 0.00
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d8
+
+	measure 'Days Since Last Order' =
+			
+			INT(
+			    TODAY() - MAX(
+			        'Sales Data'[OrderDate]
+			    )
+			)
+		formatString: #,0
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5d9
+
+	measure 'Revenue vs Target' =
+			
+			[Total Revenue] - [Revenue Target]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5da
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Revenue vs Target %' =
+			
+			DIVIDE(
+			    [Revenue vs Target],
+			    [Revenue Target],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5db
+
+	measure 'Profit vs Target' =
+			
+			[Total Profit] - [Profit Target]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5dc
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Profit vs Target %' =
+			
+			DIVIDE(
+			    [Profit vs Target],
+			    [Profit Target],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5dd
+
 	partition 'Measure Table' = m
 		mode: import
 		source =
