@@ -1,0 +1,170 @@
+table 'Product Lookup'
+	lineageTag: c466e2b2-81e3-4c2b-a402-d892b5604703
+
+	column ProductKey
+		dataType: int64
+		isKey
+		formatString: 0
+		lineageTag: 5e33b739-e4f3-455e-934b-ba0473df00d9
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductSubcategoryKey
+		dataType: int64
+		formatString: 0
+		lineageTag: b06f683d-d09a-4f96-b92d-1dd27b24d4ef
+		summarizeBy: none
+		sourceColumn: ProductSubcategoryKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductSKU
+		dataType: string
+		lineageTag: 69d3b40f-c86a-4a9f-8757-1214abad1e2d
+		summarizeBy: none
+		sourceColumn: ProductSKU
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'SKU Type'
+		dataType: string
+		lineageTag: 9c9acb7b-3dd9-4b68-97a1-f1f5d9fe974c
+		summarizeBy: none
+		sourceColumn: SKU Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		lineageTag: c4183903-7940-40aa-916a-4c324add2423
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ModelName
+		dataType: string
+		lineageTag: 5d399e29-adc4-4c30-82d0-11d04bd5299c
+		summarizeBy: none
+		sourceColumn: ModelName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductDescription
+		dataType: string
+		lineageTag: 75f6561a-24e9-41e2-9f31-c2bcd5f76142
+		summarizeBy: none
+		sourceColumn: ProductDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductColor
+		dataType: string
+		lineageTag: e2044ab0-f9e0-4a7f-ade6-8fd63d8da24a
+		summarizeBy: none
+		sourceColumn: ProductColor
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductSize
+		dataType: string
+		lineageTag: ac078195-d59d-426f-ace3-4b6a2d93d23a
+		summarizeBy: none
+		sourceColumn: ProductSize
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductStyle
+		dataType: string
+		lineageTag: 5ea15202-4ba6-4963-80cb-b7d4726f3680
+		summarizeBy: none
+		sourceColumn: ProductStyle
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductCost
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 7ce9e1b0-4351-4421-ab6c-7f9e05d91eda
+		summarizeBy: sum
+		sourceColumn: ProductCost
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductPrice
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 06452356-4d06-423c-a748-64863200aff7
+		summarizeBy: sum
+		sourceColumn: ProductPrice
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Discount Price'
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: e07693a4-3ad6-4301-bb95-26f2637867c5
+		summarizeBy: sum
+		sourceColumn: Discount Price
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Price Point' =
+			
+			SWITCH(
+			    TRUE(),
+			    'Product Lookup'[ProductPrice] > 500, "High",
+			    'Product Lookup'[ProductPrice] > 100, "Mid-Range",
+			    "Low"
+			)
+		lineageTag: 79dc31ad-73d2-435f-a31d-bbc5f2ef1a11
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'SKU Category' =
+			
+			LEFT(
+			    'Product Lookup'[ProductSKU],
+			    SEARCH(
+			        "-",
+			        'Product Lookup'[ProductSKU]
+			    )
+			    -1
+			)
+		lineageTag: f8cc725a-e6a8-4295-ac95-d0e52c52443e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Product Lookup' = m
+		mode: import
+		source =
+				let
+				    Источник = Csv.Document(File.Contents("C:\Users\user\Downloads\Power BI\AdventureWorks Raw Data\AdventureWorks Raw Data\AdventureWorks Product Lookup.csv"),[Delimiter=",", Columns=11, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Повышенные заголовки" = Table.PromoteHeaders(Источник, [PromoteAllScalars=true]),
+				    #"Измененный тип" = Table.TransformColumnTypes(#"Повышенные заголовки",{{"ProductKey", Int64.Type}, {"ProductSubcategoryKey", Int64.Type}, {"ProductSKU", type text}, {"ProductName", type text}, {"ModelName", type text}, {"ProductDescription", type text}, {"ProductColor", type text}, {"ProductSize", type text}, {"ProductStyle", type text}, {"ProductCost", type number}, {"ProductPrice", type number}}),
+				    #"Дублированный столбец" = Table.DuplicateColumn(#"Измененный тип", "ProductSKU", "Копия ProductSKU"),
+				    #"Переименованные столбцы" = Table.RenameColumns(#"Дублированный столбец",{{"Копия ProductSKU", "SKU Type"}}),
+				    #"Измененный тип1" = Table.TransformColumnTypes(#"Переименованные столбцы",{{"ProductCost", Currency.Type}, {"ProductPrice", Currency.Type}}),
+				    #"Переупорядоченные столбцы" = Table.ReorderColumns(#"Измененный тип1",{"ProductKey", "ProductSubcategoryKey", "ProductSKU", "SKU Type", "ProductName", "ModelName", "ProductDescription", "ProductColor", "ProductSize", "ProductStyle", "ProductCost", "ProductPrice"}),
+				    #"Извлеченный текст перед разделителем" = Table.TransformColumns(#"Переупорядоченные столбцы", {{"SKU Type", each Text.BeforeDelimiter(_, "-", 1), type text}}),
+				    #"Замененное значение" = Table.ReplaceValue(#"Извлеченный текст перед разделителем","0","NA",Replacer.ReplaceText,{"ProductStyle"}),
+				    #"Измененный тип2" = Table.TransformColumnTypes(#"Замененное значение",{{"ProductCost", type number}, {"ProductPrice", type number}}),
+				    #"Вставлено: умножение" = Table.AddColumn(#"Измененный тип2", "Умножение", each [ProductPrice] * 0.9, type number),
+				    #"Переименованные столбцы1" = Table.RenameColumns(#"Вставлено: умножение",{{"Умножение", "Discount Price"}}),
+				    #"Измененный тип3" = Table.TransformColumnTypes(#"Переименованные столбцы1",{{"Discount Price", Currency.Type}, {"ProductPrice", Currency.Type}, {"ProductCost", Currency.Type}}),
+				    #"Измененный тип4" = Table.TransformColumnTypes(#"Измененный тип3",{{"Discount Price", Currency.Type}, {"ProductPrice", Currency.Type}, {"ProductCost", Currency.Type}})
+				in
+				    #"Измененный тип4"
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,210 @@
+table 'Calendar Lookup'
+	lineageTag: 9f3cb028-5c16-451a-849b-60303792f374
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: Short Date
+		lineageTag: ac554da9-eacb-49e2-87c6-38739d452e05
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Day Name'
+		dataType: string
+		lineageTag: a7c528a0-e576-4866-b077-cc6b03344665
+		summarizeBy: none
+		sourceColumn: Day Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Start of Week'
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 27bf3537-14c8-45db-bd6b-290714b5fd1c
+		summarizeBy: none
+		sourceColumn: Start of Week
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Start of Month'
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 573eac64-7f81-49be-97f4-f0f57811116c
+		summarizeBy: none
+		sourceColumn: Start of Month
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Start of Qarter'
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 6b6d2b4a-7786-4fe5-a07f-8f1a729fa3be
+		summarizeBy: none
+		sourceColumn: Start of Qarter
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: b0261f12-81d0-45eb-9176-a24d602798d0
+		summarizeBy: none
+		sourceColumn: Month Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 1f84aee2-9cbe-43cd-9882-0078be301af1
+		summarizeBy: sum
+		sourceColumn: Month Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Start of Year'
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 7e76ce80-e727-45ee-b5be-391376b26c90
+		summarizeBy: none
+		sourceColumn: Start of Year
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: c5549325-4377-4d26-98d1-4e39ffa4c9be
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Number (DAX)' =
+			
+			SWITCH(
+			    'Calendar Lookup'[Month Name],
+			    "January", "1",
+			    "February", "2",
+			    "March", "3",
+			    "April", "4",
+			    "May", "5",
+			    "June", "6",
+			    "July", "7",
+			    "August", "8",
+			    "September", "9",
+			    "October", "10",
+			    "November", "11",
+			    "December", "12",
+			    "Other"
+			)
+		lineageTag: a55f7619-efde-4ccb-87fa-619aa0427700
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Short' = ```
+			
+			UPPER(
+			    LEFT(
+			        'Calendar Lookup'[Month Name],
+			        3    
+			    )
+			)
+			```
+		lineageTag: 7c992208-9b8e-4a42-b2e3-66f0b36dc915
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day of Week' =
+			
+			WEEKDAY(
+			    'Calendar Lookup'[Date],
+			    2
+			)
+		formatString: 0
+		lineageTag: 6315aa18-71ca-497a-91d1-381f733235e6
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Weekend =
+			
+			IF(
+			    'Calendar Lookup'[Day of Week] IN {6,7},
+			    "Weekend",
+			    "Weekday"
+			)
+		lineageTag: 5466fbd5-4c0a-4014-b6bf-5379036b30e6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Date Hierarchy'
+		lineageTag: 6efab238-a1f0-406e-963b-843b41988a5c
+
+		level 'Start of Year'
+			lineageTag: fd8a20dd-ba24-4f0c-b439-03624eb60354
+			column: 'Start of Year'
+
+		level 'Start of Month'
+			lineageTag: 1e70dd44-1670-4829-889f-efe086b94664
+			column: 'Start of Month'
+
+		level 'Start of Week'
+			lineageTag: 05771d13-6fbe-4123-9d81-ceb3c693b980
+			column: 'Start of Week'
+
+		level Date
+			lineageTag: 55c4be9c-e50a-4380-a969-b7b477f05a86
+			column: Date
+
+		changedProperty = IsHidden
+
+	partition 'Calendar Lookup' = m
+		mode: import
+		source =
+				let
+				    Источник = Csv.Document(File.Contents("C:\Users\user\Downloads\Power BI\AdventureWorks Raw Data\AdventureWorks Raw Data\AdventureWorks Calendar Lookup.csv"),[Delimiter=",", Columns=1, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Повышенные заголовки" = Table.PromoteHeaders(Источник, [PromoteAllScalars=true]),
+				    #"Измененный тип" = Table.TransformColumnTypes(#"Повышенные заголовки",{{"Date", type date}}),
+				    #"Вставленное название дня" = Table.AddColumn(#"Измененный тип", "Название дня", each Date.DayOfWeekName([Date]), type text),
+				    #"Переименованные столбцы" = Table.RenameColumns(#"Вставленное название дня",{{"Название дня", "Day Name"}}),
+				    #"Вставлено: начало недели" = Table.AddColumn(#"Переименованные столбцы", "Начало недели", each Date.StartOfWeek([Date], Day.Monday), type date),
+				    #"Переименованные столбцы1" = Table.RenameColumns(#"Вставлено: начало недели",{{"Начало недели", "Start of week"}}),
+				    #"Вставлено: начало месяца" = Table.AddColumn(#"Переименованные столбцы1", "Начало месяца", each Date.StartOfMonth([Date]), type date),
+				    #"Переименованные столбцы2" = Table.RenameColumns(#"Вставлено: начало месяца",{{"Начало месяца", "Start of Month"}}),
+				    #"Вставлено: начало квартала" = Table.AddColumn(#"Переименованные столбцы2", "Начало квартала", each Date.StartOfQuarter([Date]), type date),
+				    #"Переименованные столбцы3" = Table.RenameColumns(#"Вставлено: начало квартала",{{"Начало квартала", "Start of Qarter"}}),
+				    #"Измененный тип с языком" = Table.TransformColumnTypes(#"Переименованные столбцы3", {{"Date", type text}}, "en-US"),
+				    #"Измененный тип с языком1" = Table.TransformColumnTypes(#"Измененный тип с языком", {{"Start of week", type date}}, "en-US"),
+				    #"Измененный тип с языком2" = Table.TransformColumnTypes(#"Измененный тип с языком1", {{"Start of Month", type date}}, "en-US"),
+				    #"Измененный тип с языком3" = Table.TransformColumnTypes(#"Измененный тип с языком2", {{"Start of Qarter", type date}}, "en-US"),
+				    #"Измененный тип1" = Table.TransformColumnTypes(#"Измененный тип с языком3",{{"Date", type date}}),
+				    #"Вставленное название месяца" = Table.AddColumn(#"Измененный тип1", "Название месяца", each Date.MonthName([Date]), type text),
+				    #"Переименованные столбцы4" = Table.RenameColumns(#"Вставленное название месяца",{{"Название месяца", "Month Name"}}),
+				    #"Вставлено: месяц" = Table.AddColumn(#"Переименованные столбцы4", "Месяц", each Date.Month([Date]), Int64.Type),
+				    #"Переименованные столбцы5" = Table.RenameColumns(#"Вставлено: месяц",{{"Месяц", "Month Number"}}),
+				    #"Вставлено: начало года" = Table.AddColumn(#"Переименованные столбцы5", "Начало года", each Date.StartOfYear([Date]), type date),
+				    #"Переименованные столбцы6" = Table.RenameColumns(#"Вставлено: начало года",{{"Начало года", "Start of Year"}}),
+				    #"Вставлено: год" = Table.AddColumn(#"Переименованные столбцы6", "Год", each Date.Year([Date]), Int64.Type),
+				    #"Переименованные столбцы7" = Table.RenameColumns(#"Вставлено: год",{{"Год", "Year"}, {"Start of week", "Start of Week"}})
+				in
+				    #"Переименованные столбцы7"
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

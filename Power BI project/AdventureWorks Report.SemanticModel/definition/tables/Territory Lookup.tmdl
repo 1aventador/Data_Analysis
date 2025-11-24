@@ -1,0 +1,68 @@
+table 'Territory Lookup'
+	lineageTag: dd4abb18-3c0c-4704-9137-3213c9746134
+
+	column SalesTerritoryKey
+		dataType: int64
+		isKey
+		formatString: 0
+		lineageTag: ab55fcca-c009-4ba4-966d-6bae9907434f
+		summarizeBy: none
+		sourceColumn: SalesTerritoryKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: ebe8f41d-0a2a-4313-9f3c-d7484f4b7ae3
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: b8c46b5f-7eb0-46e7-a3c5-b90e27d90718
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Continent
+		dataType: string
+		lineageTag: 74936d50-4ef6-4345-a78e-424966a2fd58
+		dataCategory: Continent
+		summarizeBy: none
+		sourceColumn: Continent
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Territory Hierarchy'
+		lineageTag: 9b56621a-fbd0-4c47-9d89-90b4f3fb7fe1
+
+		level Continent
+			lineageTag: aca1b510-9e1a-400a-b122-5f362dc48c67
+			column: Continent
+
+		level Country
+			lineageTag: e2904b41-2900-4c8e-9336-2c1495d94208
+			column: Country
+
+		level Region
+			lineageTag: 1b81e55c-1e7f-4bf1-ba86-beeb507e3abe
+			column: Region
+
+	partition 'Territory Lookup' = m
+		mode: import
+		source =
+				let
+				    Источник = Csv.Document(File.Contents("C:\Users\user\Downloads\Power BI\AdventureWorks Raw Data\AdventureWorks Raw Data\AdventureWorks Territory Lookup.csv"),[Delimiter=",", Columns=4, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Повышенные заголовки" = Table.PromoteHeaders(Источник, [PromoteAllScalars=true]),
+				    #"Измененный тип" = Table.TransformColumnTypes(#"Повышенные заголовки",{{"SalesTerritoryKey", Int64.Type}, {"Region", type text}, {"Country", type text}, {"Continent", type text}})
+				in
+				    #"Измененный тип"
+
+	annotation PBI_NavigationStepName = Навигация
+
+	annotation PBI_ResultType = Table
+

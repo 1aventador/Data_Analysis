@@ -1,0 +1,370 @@
+table 'Measure Table'
+	lineageTag: a580ac22-9b87-4b63-9376-1069e33f193a
+
+	measure 'Quantity Sold' =
+			
+			SUM(
+			    'Sales Data'[OrderQuantity]
+			)
+		formatString: #,0
+		lineageTag: 8b09b6ec-2f0a-432b-a2cf-39bf80819535
+
+	measure 'Quantity Returned' =
+			
+			SUM(
+			    'Returns Data'[ReturnQuantity]
+			)
+		formatString: #,0
+		lineageTag: b22b0308-e3e5-40ae-8678-e1d83ae9a1ce
+
+	measure 'Average Retail Price' = ```
+			
+			 AVERAGE(
+			    'Product Lookup'[ProductPrice]
+			 )
+			```
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: f8fdb7a6-09dd-40e1-a58c-4ec092b5708f
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Returns' =
+			
+			COUNT(
+			    'Returns Data'[ReturnQuantity]
+			)
+		formatString: #,0
+		lineageTag: a5912084-496c-4d57-8dfd-e8a114d2e782
+
+	measure 'Total Orders' = ```
+			
+			 DISTINCTCOUNT(
+			    'Sales Data'[OrderNumber]
+			 )
+			```
+		formatString: #,0
+		lineageTag: 177d01b2-ac08-45f0-b218-2e898a7ff488
+
+	measure 'Total Customers' =
+			
+			DISTINCTCOUNT('Sales Data'[CustomerKey]
+			)
+		formatString: #,0.0
+		lineageTag: 225bad03-0148-44fe-8a88-872ad5d17a38
+
+	measure 'Return Rate' = ```
+			
+			DIVIDE(
+			[Quantity Returned],
+			[Quantity Sold], 
+			"No Sales"
+			)
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 96908347-f572-4b41-9dec-9d739a8de061
+
+	measure 'Bulk Orders' =
+			
+			CALCULATE(
+			    [Total Orders],
+			    'Sales Data'[OrderQuantity] > 1
+			)
+		formatString: #,0
+		lineageTag: f20cab3b-2357-4c30-a917-3af77db61337
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Weekend Orders' =
+			
+			CALCULATE(
+			    [Total Orders],
+			    'Calendar Lookup'[Weekend] = "Weekend"
+			)
+		formatString: #,0
+		lineageTag: c7bba201-5e09-49a8-83f8-70fb6223dc3e
+
+	measure 'Bike Returns' =
+			
+			CALCULATE(
+			    [Total Returns],
+			    'Product Categories Lookup'[CategoryName] = "Bikes"
+			    )
+		formatString: 0
+		lineageTag: e73635bf-f217-49b0-be76-e6cc557ce44d
+
+	measure 'Bike Sales' =
+			
+			CALCULATE(
+			    [Quantity Sold],
+			    'Product Categories Lookup'[CategoryName] = "Bikes"
+			)
+		formatString: 0
+		lineageTag: 9d77152b-49ec-4513-bae0-69402239593b
+
+	measure 'Bike Return Rate' =
+			
+			CALCULATE(
+			    [Return Rate],
+			    'Product Categories Lookup'[CategoryName] = "Bikes"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: db249983-ced9-4d97-a83c-12d9adb66d91
+
+	measure 'All Orders' =
+			
+			CALCULATE(
+			    [Total Orders],
+			    ALL(
+			        'Sales Data'
+			    )
+			)
+		formatString: #,0
+		lineageTag: 58a35ddd-fca7-48b8-942d-5334f1f1712a
+
+	measure '% of All Orders' =
+			
+			DIVIDE(
+			    [Total Orders],
+			    [All Orders]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 1cc86e8a-5edb-414d-b969-1c8a83a4e6db
+
+	measure 'Overall Average Price' =
+			
+			CALCULATE(
+			    [Average Retail Price],
+			    ALL(
+			        'Product Lookup'
+			    )
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 194df7ab-6879-4d8f-ac80-5179c1da3a96
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'All Returns' =
+			
+			CALCULATE(
+			    [Total Returns],
+			    ALL(
+			        'Returns Data'
+			    )
+			)
+		formatString: 0
+		lineageTag: d895dcdd-6236-45ac-9b96-83e0a276651c
+
+	measure '% of All Returns' =
+			
+			DIVIDE(
+			    [Total Returns],
+			    [All Returns]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 0d728a29-066c-40fc-90d9-56494caf4403
+
+	measure 'High Ticket Orders' =
+			
+			CALCULATE(
+			    [Total Orders],
+			    FILTER(
+			        'Product Lookup',
+			        'Product Lookup'[ProductPrice] > [Overall Average Price]
+			    )
+			)
+		formatString: #,0
+		lineageTag: bb1b9636-0278-4fff-8a6e-0fa862f6a362
+
+	measure 'Total Revenue' = ```
+			
+			SUMX(
+			    'Sales Data',
+			    'Sales Data'[OrderQuantity] * 
+			    RELATED(
+			        'Product Lookup'[ProductPrice]
+			    )
+			)
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 56f53e63-26a9-4519-b8bf-f043b0a55b7b
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Average Revenue per Customer' =
+			
+			DIVIDE(
+			    [Total Revenue],
+			    [Total Customers]
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 4c59a9a7-4cd7-4f30-90ea-aa26eef48a7b
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Cost' =
+			
+			SUMX(
+			    'Sales Data',
+			    'Sales Data'[OrderQuantity] *
+			    RELATED(
+			        'Product Lookup'[ProductCost]
+			    )
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 84f35acc-adcb-4cf1-8bd1-1299d3aefe48
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Profit' =
+			
+			[Total Revenue] - [Total Cost]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: e20a3dd3-0dc1-4261-b709-5ce5a6d08eba
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'YTD Revenue' =
+			
+			CALCULATE(
+			    [Total Revenue],
+			    DATESYTD(
+			        'Calendar Lookup'[Date]
+			    )
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 407fdb3b-3ada-46c8-b05a-d5c9b93f0f55
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Previous Month Revenue' = ```
+			
+			CALCULATE(
+			    [Total Revenue],
+			    DATEADD(
+			        'Calendar Lookup'[Date],
+			        -1,
+			        MONTH
+			    )
+			)
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: f722c7c3-4d33-4e3a-99ff-50cfd3e43a9e
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Revenue Target' =
+			
+			[Previous Month Revenue] * 1.1
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: e573c333-986e-45ef-b80c-b587d20ae0b8
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure '10-Day Rolling Revenue' =
+			
+			CALCULATE(
+			    [Total Revenue],
+			    DATESINPERIOD(
+			        'Calendar Lookup'[Date],
+			        MAX(
+			            'Calendar Lookup'[Date]
+			        ),
+			        -10,
+			        DAY
+			    )
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 59c3b807-5604-4252-b544-e805d719ed01
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Previous Month Returns' =
+			
+			CALCULATE(
+			    [Total Returns],
+			    DATEADD(
+			        'Calendar Lookup'[Date],
+			        -1,
+			        MONTH
+			    )
+			)
+		formatString: #,0
+		lineageTag: 14e1bbba-9134-4013-8007-fb1bf8ad4be1
+
+	measure 'Previous Month Orders' =
+			
+			CALCULATE(
+			    [Total Orders],
+			    DATEADD(
+			        'Calendar Lookup'[Date],
+			        -1,
+			        MONTH
+			    )
+			)
+		formatString: 0
+		lineageTag: 296f905c-54d1-4531-9944-50457fedb95f
+
+	measure 'Previous Month Profit' = ```
+			
+			CALCULATE(
+			    [Total Profit],
+			    DATEADD(
+			        'Calendar Lookup'[Date],
+			        -1,
+			        MONTH
+			    )
+			)
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: f04d71cf-6bf0-47a2-9448-a335971d74c9
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Order Target' =
+			
+			[Previous Month Orders] * 1.1
+		formatString: 0
+		lineageTag: 00d078c2-b3bc-4562-a7c6-6b173d97bf3b
+
+	measure 'Profit Target' =
+			
+			[Previous Month Profit] * 1.1
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 6d99b158-a33a-45fc-a91c-d21c2cb047ed
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure '90-Day Rolling Profit' =
+			
+			CALCULATE(
+			    [Total Profit],
+			    DATESINPERIOD(
+			        'Calendar Lookup'[Date],
+			        LASTDATE(
+			            'Calendar Lookup'[Date]
+			        ),
+			        -90,
+			        DAY
+			    )
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: f1c0a7da-b118-4707-8a37-6d15c8eeaa3d
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	partition 'Measure Table' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
