@@ -1,0 +1,9 @@
+Account,DeviceUniqueIdentifier,SystemMemorySize,AdRevenue,BillingRevenue
+A1,Dev_1,1024,1.5,0.0
+A2,Dev_2,1535,0.0,5.0
+A3,Dev_2,1535,2.5,
+A4,Dev_3,2048,,10.0
+A5,Dev_4,2500,3.0,0.0
+A6,Dev_5,4096,1.0,15.0
+A7,Dev_5,4096,4.0,5.0
+A8,Dev_6,8192,,
